@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Task;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class TaskStepFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'task_id' => Task::factory(),
+            'description' => fake()->sentence(),
+            'completed' => fake()->boolean(),
         ];
     }
 }

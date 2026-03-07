@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTaskRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class StoreTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,9 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
+            'status' => ['required', Rule::enum(TaskStatus::class)],
         ];
     }
 }

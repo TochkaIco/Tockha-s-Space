@@ -20,6 +20,7 @@ class TaskController extends Controller
         $tasks = Auth::user()
             ->tasks()
             ->when($request->status, fn ($query, $status) => $query->where('status', $status))
+            ->latest()
             ->get();
 
         return view('tasks.index', [
@@ -39,9 +40,12 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request): void
+    public function store(StoreTaskRequest $request)
     {
-        //
+        Auth::user()->tasks()->create($request->validated());
+
+        return to_route('tasks.index')
+            ->with('success', 'Task created successfully');
     }
 
     /**
@@ -49,7 +53,13 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return view('tasks.show');
+        if ($task->user_id !== Auth::user()->id) {
+            return to_route('tasks.index');
+        }
+
+        return view('tasks.show', [
+            'task' => $task,
+        ]);
     }
 
     /**
@@ -71,8 +81,10 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task): void
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return to_route('tasks.index');
     }
 }

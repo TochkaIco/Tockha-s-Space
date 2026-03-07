@@ -2,8 +2,6 @@
 
 use App\Models\Task;
 use App\Models\User;
-use Database\Factories\TaskStepFactory;
-use Illuminate\Database\Eloquent\Collection;
 
 test('it belongs to a user', function () {
     $task = Task::factory()->create();

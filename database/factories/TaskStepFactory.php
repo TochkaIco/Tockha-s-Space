@@ -20,7 +20,6 @@ class TaskStepFactory extends Factory
         return [
             'task_id' => Task::factory(),
             'description' => fake()->sentence(),
-            'completed' => fake()->boolean(),
         ];
     }
 }

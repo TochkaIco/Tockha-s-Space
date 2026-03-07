@@ -44,6 +44,3 @@ return RectorConfig::configure()
     ->withRules([
         DeclareStrictTypesRector::class,
     ]);
-//    ->withTypeCoverageLevel(0)
-//    ->withDeadCodeLevel(0)
-//    ->withCodeQualityLevel(0);

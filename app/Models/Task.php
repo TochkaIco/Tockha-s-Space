@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\TaskStatus;
@@ -8,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Task extends Model
 {
@@ -19,11 +22,25 @@ class Task extends Model
         'status' => TaskStatus::class,
     ];
 
-    protected $fillable = [
+    protected $attributes = [
         'status' => TaskStatus::PENDING->value,
     ];
 
-    public function user() : BelongsTo
+    public static function statusCounts(User $user): Collection
+    {
+        $counts = $user->tasks()
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status');
+
+        return collect(TaskStatus::cases())
+            ->mapWithKeys(fn ($status) => [
+                $status->value => $counts->get($status->value, 0),
+            ])
+            ->put('all', $user->tasks()->count());
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

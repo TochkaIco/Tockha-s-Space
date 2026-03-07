@@ -1,0 +1,17 @@
+# .dockerignore
+.git
+.github
+.agents
+.idea
+node_modules
+vendor
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*.php
+storage/logs/*.log
+public/build
+.env
+.phpunit.result.cache
+tests
+docker-compose*.yml
+Dockerfile

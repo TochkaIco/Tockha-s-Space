@@ -22,6 +22,6 @@ class TaskFactory extends Factory
             'title' => fake()->sentence(),
             'description' => fake()->paragraph(),
             'links' => [fake()->url()],
-            ];
+        ];
     }
 }

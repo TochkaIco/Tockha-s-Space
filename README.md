@@ -1,5 +1,4 @@
 ![Feature Preview](./img.png)
-<img src="./img.png" alt="Feature Preview">
 
 ## Docker Deployment (Production)
 

@@ -31,6 +31,9 @@ class StoreTaskRequest extends FormRequest
             'status' => ['required', Rule::enum(TaskStatus::class)],
             'links' => ['nullable', 'array'],
             'links.*' => ['url', 'max:255'],
+            'steps' => ['nullable', 'array'],
+            'steps.*' => ['string', 'max:255'],
+            'image' => ['nullable', 'image', 'max:5120'],
         ];
     }
 }

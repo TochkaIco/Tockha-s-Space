@@ -1,3 +1,6 @@
+![Feature Preview](./img.png)
+<img src="./img.png" alt="Feature Preview">
+
 ## Docker Deployment (Production)
 
 This project is configured for production deployment using **FrankenPHP**.

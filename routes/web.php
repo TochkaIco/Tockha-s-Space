@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\StepController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks', [TaskController::class, 'store'])->name('task.store');
     Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('task.show');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+    Route::patch('/steps/{step}', [StepController::class, 'update'])->name('step.update');
 
     Route::post('/logout', [SessionsController::class, 'destroy']);
 });

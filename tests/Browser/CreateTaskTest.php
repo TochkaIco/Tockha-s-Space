@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Models\Task;
 use App\Models\User;
 
 it('creates a new task', function () {
     $this->actingAs($user = User::factory()->create());
     visit('/tasks')
         ->click('@create-task-button')
-        ->fill('title', 'Some Example Title')
-        ->fill('description', 'Some Example Description')
+        ->fill('@title-field', 'Some Example Title')
+        ->fill('@description-field', 'Some Example Description')
         ->click('@button-status-in_progress')
         ->fill('@new-link-field', 'https://tochkaico.org')
         ->click('@add-link-button')

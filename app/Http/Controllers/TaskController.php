@@ -42,7 +42,23 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        Auth::user()->tasks()->create($request->validated());
+        $task = Auth::user()->tasks()->create($request->safe()->except(['steps', 'image']));
+
+        if($request->steps)
+        {
+            $task->steps()->createMany(
+                collect($request->steps)->map(fn ($step) => ['description' => $step]),
+            );
+        }
+
+        if ($request->image)
+        {
+            $imagePath = $request->image->store('tasks', 'public');
+
+            $task->update([
+                'image_path' => $imagePath,
+            ]);
+        }
 
         return to_route('tasks.index')
             ->with('success', 'Task created successfully');

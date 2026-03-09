@@ -71,12 +71,14 @@
                 }"
                 action="{{ route('task.store') }}"
                 method="post"
+                enctype="multipart/form-data"
             >
                 @csrf
                 <div class="space-y-6">
                     <x-form.field
                         label="Title"
                         name="title"
+                        data-test="title-field"
                         placeholder="Enter a title for your task"
                         autofocus
                         required
@@ -108,8 +110,16 @@
                         label="Description"
                         name="description"
                         type="textarea"
+                        data-test="description-field"
                         placeholder="Describe your task..."
                     />
+
+                    <div class="space-y-2">
+                        <label for="image" class="label">Featured Image</label>
+
+                        <input type="file" name="image" accept="image/*">
+                        <x-form.error name="image" />
+                    </div>
 
                     <div>
                         <fieldset class="space-y-3">
@@ -121,7 +131,7 @@
                                     type="text"
                                     id="new-step"
                                     data-test="new-step-field"
-                                    placeholder="What's on your mind?"
+                                    placeholder="What are the steps?"
                                     class="input flex-1"
                                 >
 
@@ -131,7 +141,7 @@
                                     :disabled="newStep.trim().length === 0"
                                     class="form-muted-icon"
                                     data-test="add-step-button"
-                                    aria-label="Add link button"
+                                    aria-label="Add Stage button"
                                 >
                                     <x-icons.close class="rotate-45" />
                                 </button>
@@ -144,6 +154,7 @@
                                         name="steps[]"
                                         x-model="step"
                                         class="input flex-1 form-muted-icon"
+                                        readonly
                                     >
 
                                     <button
@@ -195,6 +206,7 @@
                                         name="links[]"
                                         x-model="link"
                                         class="input flex-1 form-muted-icon"
+                                        readonly
                                     >
 
                                     <button

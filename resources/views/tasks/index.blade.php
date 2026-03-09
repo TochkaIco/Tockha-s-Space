@@ -8,6 +8,7 @@
                 x-data
                 @click="$dispatch('open-modal', 'create-task')"
                 is="button"
+                data-test="create-task-button"
                 class="mt-3 cursor-pointer h-32 w-full text-left">
                 <p>What's on your mind?</p>
             </x-card>
@@ -60,7 +61,15 @@
         </div>
 
         <x-modal name="create-task" title="Create Task">
-            <form x-data="{ status: @js(App\TaskStatus::PENDING->value) }" action="{{ route('task.store') }}" method="post">
+            <form
+                x-data="{
+                    status: @js(App\TaskStatus::PENDING->value),
+                    newLink: '',
+                    links: [],
+                }"
+                action="{{ route('task.store') }}"
+                method="post"
+            >
                 @csrf
                 <div class="space-y-6">
                     <x-form.field
@@ -79,9 +88,9 @@
                                 <button
                                     type="button"
                                     @click="status = @js($status->value)"
+                                    data-test="button-status-{{ $status->value }}"
                                     class="btn flex-1 h-10"
-                                    :class="status === @js($status->value) ? '' : 'btn-outlined' "
-                                    :class="{'btn-primary': status !== @js($status->value)}"
+                                    :class="status === @js($status->value) ? 'btn-primary' : 'btn-outlined' "
                                 >
                                     {{ $status->label() }}
                                 </button>
@@ -99,6 +108,57 @@
                         type="textarea"
                         placeholder="Describe your task..."
                     />
+
+                    <div>
+                        <fieldset class="space-y-3">
+                            <legend class="label">Links</legend>
+
+                            <div class="flex gap-x-2 items-center">
+                                <input
+                                    x-model="newLink"
+                                    type="url"
+                                    id="new-link"
+                                    data-test="new-link-field"
+                                    placeholder="https://example.com"
+                                    autocomplete="url"
+                                    class="input flex-1"
+                                    spellcheck="false"
+                                >
+
+                                <button
+                                    type="button"
+                                    @click="links.push(newLink.trim()); newLink='';"
+                                    :disabled="newLink.trim().length === 0"
+                                    class="form-muted-icon"
+                                    data-test="add-link-button"
+                                    aria-label="Add link button"
+                                >
+                                    <x-icons.close class="rotate-45" />
+                                </button>
+                            </div>
+
+                            <template x-for="(link, index) in links" :key="link">
+                                <div class="flex gap-x-2 items-center">
+                                    <input
+                                        type="text"
+                                        name="links[]"
+                                        x-model="link"
+                                        class="input flex-1 form-muted-icon"
+                                    >
+
+                                    <button
+                                        type="button"
+                                        @click="links.splice(index, 1)"
+                                        class="form-muted-icon"
+                                        data-test="remove-link-button"
+                                        aria-label="Remove link button"
+                                    >
+                                        <x-icons.close />
+                                    </button>
+                                </div>
+                            </template>
+                        </fieldset>
+                    </div>
 
                     <div class="flex justify-end gap-x-5">
                         <button type="button" @click="$dispatch('close-modal')">Cancel</button>

@@ -66,6 +66,8 @@
                     status: @js(App\TaskStatus::PENDING->value),
                     newLink: '',
                     links: [],
+                    newStep: '',
+                    steps: [],
                 }"
                 action="{{ route('task.store') }}"
                 method="post"
@@ -108,6 +110,55 @@
                         type="textarea"
                         placeholder="Describe your task..."
                     />
+
+                    <div>
+                        <fieldset class="space-y-3">
+                            <legend class="label">Steps</legend>
+
+                            <div class="flex gap-x-2 items-center">
+                                <input
+                                    x-model="newStep"
+                                    type="text"
+                                    id="new-step"
+                                    data-test="new-step-field"
+                                    placeholder="What's on your mind?"
+                                    class="input flex-1"
+                                >
+
+                                <button
+                                    type="button"
+                                    @click="steps.push(newStep.trim()); newStep='';"
+                                    :disabled="newStep.trim().length === 0"
+                                    class="form-muted-icon"
+                                    data-test="add-link-button"
+                                    aria-label="Add link button"
+                                >
+                                    <x-icons.close class="rotate-45" />
+                                </button>
+                            </div>
+
+                            <template x-for="(step, index) in steps" :key="step">
+                                <div class="flex gap-x-2 items-center">
+                                    <input
+                                        type="text"
+                                        name="steps[]"
+                                        x-model="step"
+                                        class="input flex-1 form-muted-icon"
+                                    >
+
+                                    <button
+                                        type="button"
+                                        @click="steps.splice(index, 1)"
+                                        class="form-muted-icon"
+                                        data-test="remove-link-button"
+                                        aria-label="Remove link button"
+                                    >
+                                        <x-icons.close />
+                                    </button>
+                                </div>
+                            </template>
+                        </fieldset>
+                    </div>
 
                     <div>
                         <fieldset class="space-y-3">

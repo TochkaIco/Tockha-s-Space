@@ -130,7 +130,7 @@
                                     @click="steps.push(newStep.trim()); newStep='';"
                                     :disabled="newStep.trim().length === 0"
                                     class="form-muted-icon"
-                                    data-test="add-link-button"
+                                    data-test="add-step-button"
                                     aria-label="Add link button"
                                 >
                                     <x-icons.close class="rotate-45" />
@@ -150,7 +150,7 @@
                                         type="button"
                                         @click="steps.splice(index, 1)"
                                         class="form-muted-icon"
-                                        data-test="remove-link-button"
+                                        data-test="remove-step-button"
                                         aria-label="Remove link button"
                                     >
                                         <x-icons.close />

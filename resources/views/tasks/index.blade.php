@@ -38,6 +38,12 @@
             <div class="grid md:grid-cols-2 gap-6">
                 @forelse($tasks as $task)
                     <x-card href="{{ route('task.show', $task) }}">
+                        @if($task->image_path)
+                            <div class="mb-4 -mx-4 -mt-4 rounded-t-lg overflow-hidden">
+                                <img src="{{ asset('storage/' . $task->image_path) }}" alt="Image" class="w-full h-auto object-cover mb-2">
+                            </div>
+                        @endif
+
                         <h3 class="text-foreground text-lg">{{ $task->title }}</h3>
                         <p class="mt-5 line-clamp-2">{{ $task->description }}</p>
                         <div class="mt-2">
@@ -71,7 +77,7 @@
                 }"
                 action="{{ route('task.store') }}"
                 method="post"
-                enctype="multipart/form-data"
+                x-bind:enctype="hasImage ? 'multipart/form-data' : false"
             >
                 @csrf
                 <div class="space-y-6">
@@ -225,7 +231,7 @@
 
                     <div class="flex justify-end gap-x-5">
                         <button type="button" @click="$dispatch('close-modal')">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="submit" class="btn btn-primary" data-test="submit-button">Create</button>
                     </div>
                 </div>
             </form>

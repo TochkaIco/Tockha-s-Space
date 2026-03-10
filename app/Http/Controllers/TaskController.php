@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateTask;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
@@ -40,25 +41,9 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request, CreateTask $action)
     {
-        $task = Auth::user()->tasks()->create($request->safe()->except(['steps', 'image']));
-
-        if($request->steps)
-        {
-            $task->steps()->createMany(
-                collect($request->steps)->map(fn ($step) => ['description' => $step]),
-            );
-        }
-
-        if ($request->image)
-        {
-            $imagePath = $request->image->store('tasks', 'public');
-
-            $task->update([
-                'image_path' => $imagePath,
-            ]);
-        }
+        $action->handle($request->safe()->all());
 
         return to_route('tasks.index')
             ->with('success', 'Task created successfully');

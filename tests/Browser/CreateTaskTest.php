@@ -6,16 +6,17 @@ use App\Models\User;
 
 it('creates a new task', function () {
     $this->actingAs($user = User::factory()->create());
+
     visit('/tasks')
         ->click('@create-task-button')
         ->fill('@title-field', 'Some Example Title')
         ->fill('@description-field', 'Some Example Description')
         ->click('@button-status-in_progress')
+        ->fill('@new-step-field', 'Step 1')
+        ->click('@add-step-button')
         ->fill('@new-link-field', 'https://tochkaico.org')
         ->click('@add-link-button')
-        ->fill('@new-link-field', 'https://laracasts.com')
-        ->click('@add-link-button')
-        ->click('Create')
+        ->click('@submit-button')
         ->assertPathIs('/tasks');
 
     expect($user->tasks()->first())->toMatchArray([

@@ -1,4 +1,5 @@
 ![Feature Preview](./img.png)
+![Feature Preview](./img_1.png)
 
 ## Docker Deployment (Production)
 

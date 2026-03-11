@@ -8,7 +8,7 @@ use App\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreTaskRequest extends FormRequest
+class TaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -32,7 +32,8 @@ class StoreTaskRequest extends FormRequest
             'links' => ['nullable', 'array'],
             'links.*' => ['url', 'max:255'],
             'steps' => ['nullable', 'array'],
-            'steps.*' => ['string', 'max:255'],
+            'steps.*.description' => ['string', 'max:255'],
+            'steps.*.completed' => ['boolean'],
             'image' => ['nullable', 'image', 'max:5120'],
         ];
     }

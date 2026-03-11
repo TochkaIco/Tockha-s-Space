@@ -7,18 +7,22 @@
             <h3 class="font-bold text-3xl">Tochka's Portal</h3>
         </div>
 
-        @auth
-            <form action="/logout" method="post">
-                @csrf
-                <button type="submit" data-test="logout-button">Log Out</button>
-            </form>
-        @endauth
+        <div class="flex gap-x-3 items-center">
+            @auth
+                <a href="{{ route('profile.edit') }}">Edit Profile</a>
 
-        @guest
-            <div class="flex gap-x-3">
-                <a href="/register" class="btn">Register</a>
-                <a href="/login">Sign In</a>
-            </div>
-        @endguest
+                <form action="/logout" method="post">
+                    @csrf
+                    <button type="submit" data-test="logout-button">Log Out</button>
+                </form>
+            @endauth
+
+            @guest
+                <div class="flex gap-x-3">
+                    <a href="/register" class="btn">Register</a>
+                    <a href="/login">Sign In</a>
+                </div>
+            @endguest
+        </div>
     </div>
 </nav>

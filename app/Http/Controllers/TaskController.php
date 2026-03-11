@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\CreateTask;
-use App\Http\Requests\StoreTaskRequest;
-use App\Http\Requests\UpdateTaskRequest;
+use App\Actions\UpdateTask;
+use App\Http\Requests\TaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +41,7 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request, CreateTask $action)
+    public function store(TaskRequest $request, CreateTask $action)
     {
         $action->handle($request->safe()->all());
 
@@ -54,10 +54,6 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        if ($task->user_id !== Auth::user()->id) {
-            return to_route('tasks.index');
-        }
-
         return view('tasks.show', [
             'task' => $task,
         ]);
@@ -74,9 +70,11 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task): void
+    public function update(TaskRequest $request, Task $task, UpdateTask $action)
     {
-        //
+        $action->handle($request->safe()->all(), $task);
+
+        return back()->with('success', 'Task updated!');
     }
 
     /**

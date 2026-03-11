@@ -20,3 +20,9 @@ test('it can have steps', function () {
 
     expect($task->fresh()->steps)->toHaveCount(1);
 });
+
+test('it can format a description using markdown', function () {
+    $task = new Task(['description' => 'Hello *world*!']);
+
+    expect($task->formattedDescription)->toEqual("<p>Hello <em>world</em>!</p>\n");
+});

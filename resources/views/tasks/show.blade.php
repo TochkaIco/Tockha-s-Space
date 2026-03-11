@@ -7,7 +7,12 @@
             </a>
 
             <div class="flex gap-x-3 items-center">
-                <button class="btn btn-outlined">
+                <button
+                    x-data
+                    class="btn btn-outlined"
+                    data-test="edit-task-button"
+                    @click="$dispatch('open-modal', 'edit-task')"
+                >
                     <x-icons.external/>
                     Edit Task
                 </button>
@@ -24,7 +29,7 @@
         <div class="mt-6">
             @if($task->image_path)
                 <div class="rounded-lg overflow-hidden">
-                    <img src="{{ asset('storage/' . $task->image_path) }}" alt="Image" class="w-full h-auto object-cover mb-2">
+                    <img src="{{ asset('storage/' . $task->image_path) }}" alt="Image" class="w-full h-auto max-h-100 object-cover mb-2">
                 </div>
             @endif
 
@@ -42,8 +47,8 @@
             </div>
 
             @if($task->description)
-                <x-card class="mt-6">
-                    <div class="text-foreground max-w-none cursor-pointer">{{ $task->description }}</div>
+                <x-card class="mt-6" is="div">
+                    <div class="text-foreground max-w-none cursor-pointer prose prose-invert">{!! $task->formattedDescription !!}</div>
                 </x-card>
             @endif
 
@@ -84,5 +89,7 @@
                 </div>
             @endif
         </div>
+
+        <x-task.modal :task="$task" />
     </div>
 </x-layout>

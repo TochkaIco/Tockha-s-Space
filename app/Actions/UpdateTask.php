@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Models\User;
-use Illuminate\Container\Attributes\CurrentUser;
+use App\Models\Task;
 use Illuminate\Support\Facades\DB;
 
-class CreateTask
+class UpdateTask
 {
-    public function __construct(#[CurrentUser] protected User $user)
-    {
-        //
-    }
-
-    public function handle(array $attributes): void
+    public function handle(array $attributes, Task $task): void
     {
         $data = collect($attributes)->only([
             'title', 'description', 'status', 'links',
@@ -25,9 +19,10 @@ class CreateTask
             $data['image_path'] = $attributes['image']->store('tasks', 'public');
         }
 
-        DB::transaction(function () use ($data, $attributes) {
-            $task = $this->user->tasks()->create($data);
+        DB::transaction(function () use ($task, $data, $attributes) {
+            $task->update($data);
 
+            $task->steps()->delete();
             $task->steps()->createMany($attributes['steps'] ?? []);
         });
     }

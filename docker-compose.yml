@@ -1,0 +1,107 @@
+services:
+    app:
+        image: dunglas/frankenphp:latest-php8.4
+        restart: unless-stopped
+        environment:
+            SERVER_NAME: ":80"
+            APP_RUNTIME: FrankenPHP\Laravel\Runtime
+            FRANKENPHP_CONFIG: "worker ./public/index.php"
+            APP_ENV: ${APP_ENV:-local}
+            APP_DEBUG: ${APP_DEBUG:-true}
+            APP_URL: ${APP_URL:-http://localhost}
+            APP_KEY: ${APP_KEY}
+            DB_CONNECTION: mariadb
+            DB_HOST: mariadb
+            DB_PORT: 3306
+            DB_DATABASE: ${DB_DATABASE:-tochkasportal}
+            DB_USERNAME: ${DB_USERNAME:-root}
+            DB_PASSWORD: ${DB_PASSWORD:-}
+            CACHE_STORE: ${CACHE_STORE:-database}
+            SESSION_DRIVER: ${SESSION_DRIVER:-database}
+            QUEUE_CONNECTION: ${QUEUE_CONNECTION:-database}
+            REDIS_HOST: redis
+            MAIL_MAILER: smtp
+            MAIL_HOST: mailpit
+            MAIL_PORT: 1025
+        ports:
+            - "${APP_PORT:-80}:80"
+            - "${VITE_PORT:-5173}:5173"
+        volumes:
+            - .:/app
+        depends_on:
+            mariadb:
+                condition: service_healthy
+            redis:
+                condition: service_started
+        networks:
+            - app-network
+
+    mariadb:
+        image: mariadb:11
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-}
+            MYSQL_DATABASE: ${DB_DATABASE:-tochkasportal}
+            MYSQL_USER: ${DB_USERNAME:-root}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-}
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        volumes:
+            - mariadb-data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+        networks:
+            - app-network
+
+    redis:
+        image: redis:alpine
+        restart: unless-stopped
+        volumes:
+            - redis-data:/data
+        networks:
+            - app-network
+
+    mailpit:
+        image: axllent/mailpit
+        restart: unless-stopped
+        ports:
+            - "${MAILPIT_PORT:-8025}:8025"
+        networks:
+            - app-network
+
+    worker:
+        image: dunglas/frankenphp:latest-php8.4
+        restart: unless-stopped
+        environment:
+            APP_ENV: ${APP_ENV:-local}
+            APP_DEBUG: ${APP_DEBUG:-true}
+            APP_KEY: ${APP_KEY}
+            DB_CONNECTION: mariadb
+            DB_HOST: mariadb
+            DB_PORT: 3306
+            DB_DATABASE: ${DB_DATABASE:-tochkasportal}
+            DB_USERNAME: ${DB_USERNAME:-root}
+            DB_PASSWORD: ${DB_PASSWORD:-}
+            CACHE_STORE: ${CACHE_STORE:-database}
+            SESSION_DRIVER: ${SESSION_DRIVER:-database}
+            QUEUE_CONNECTION: ${QUEUE_CONNECTION:-database}
+            REDIS_HOST: redis
+        volumes:
+            - .:/app
+        command: php artisan queue:work --tries=3 --timeout=90
+        depends_on:
+            - mariadb
+            - redis
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    mariadb-data:
+    redis-data:
